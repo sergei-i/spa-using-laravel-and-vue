@@ -21,7 +21,7 @@ class ContactsTest extends TestCase
 
         $this->assertEquals('Test Name', $contact->name);
         $this->assertEquals('test@email.com', $contact->email);
-        $this->assertEquals('05/14/1990', $contact->birthday);
+        $this->assertEquals('05/14/1990', $contact->birthday->format('m/d/Y'));
         $this->assertEquals('ABC String', $contact->company);
     }
 
@@ -34,18 +34,10 @@ class ContactsTest extends TestCase
                     array_merge($this->data(), [$field => '']));
 
                 $response->assertSessionHasErrors($field);
+
                 $this->assertCount(0, Contact::all());
             });
     }
-
-    /*public function name_is_required()
-    {
-        $response = $this->post('/api/contacts',
-            array_merge($this->data(), ['name' => '']));
-
-        $response->assertSessionHasErrors('name');
-        $this->assertCount(0, Contact::all());
-    }*/
 
     /** @test */
     public function email_must_be_a_valid_email()
@@ -54,18 +46,57 @@ class ContactsTest extends TestCase
             array_merge($this->data(), ['email' => 'Not an email']));
 
         $response->assertSessionHasErrors('email');
+
         $this->assertCount(0, Contact::all());
     }
 
     /** @test */
     public function birthdays_are_properly_stored()
     {
-        $this->withoutExceptionHandling();
         $response = $this->post('/api/contacts', array_merge($this->data()));
 
         $this->assertCount(1, Contact::all());
         $this->assertInstanceOf(Carbon::class, Contact::first()->birthday);
         $this->assertEquals('05-14-1990', Contact::first()->birthday->format('m-d-Y'));
+    }
+
+    /** @test */
+    public function a_contact_can_be_retrieved()
+    {
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->get('/api/contacts/' . $contact->id);
+        $response->assertJson([
+            'name' => $contact->name,
+            'email' => $contact->email,
+            'birthday' => $contact->birthday,
+            'company' => $contact->company,
+        ]);
+    }
+
+    /** @test */
+    public function a_contact_can_be_patched()
+    {
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->patch('/api/contacts/' . $contact->id, $this->data());
+//        $contact = Contact::first();
+        $contact = $contact->fresh();
+
+        $this->assertEquals('Test Name', $contact->name);
+        $this->assertEquals('test@email.com', $contact->email);
+        $this->assertEquals('05/14/1990', $contact->birthday->format('m/d/Y'));
+        $this->assertEquals('ABC String', $contact->company);
+    }
+
+    /** @test */
+    public function a_contact_can_be_deleted()
+    {
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->delete('/api/contacts/' . $contact->id);
+
+        $this->assertCount(0, Contact::all());
     }
 
     private function data()
