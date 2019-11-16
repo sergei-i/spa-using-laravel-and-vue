@@ -4,18 +4,33 @@
 
         <div v-else>
             <div class="flex justify-between">
-                <div class="text-blue-400">
+                <a href="#" class="text-blue-400" @click="$router.back()">
                     < Back
-                </div>
-                <div>
-                    <router-link :to="'/contact/' + contact.contact_id + '/edit'"
+                </a>
+                <div class="relative">
+                    <router-link :to="'/contacts/' + contact.contact_id + '/edit'"
                                  class="px-4 py-2 rounded text-sm text-green-500 border border-green-500 font-bold mr-3">
                         Edit
                     </router-link>
-                    <a href="#" class="px-4 py-2 border border-red-500 rounded text-sm font-bold text-red-500">
+                    <a href="#" class="px-4 py-2 border border-red-500 rounded text-sm font-bold text-red-500"
+                       @click="modal = !modal">
                         Delete
                     </a>
+                    <div v-if="modal"
+                         class="absolute bg-blue-900 text-white rounded-lg z-20 p-8 w-64 right-0 mt-2 mr-6">
+                        <p>Are you sure you want to delete this record?</p>
+                        <div class="flex items-center mt-6 justify-end">
+                            <button class="text-white pr-4" @click="modal = !modal">
+                                Cancel
+                            </button>
+                            <button class="px-4 py-2 bg-red-500 rounded text-sm font-bold text-white" @click="destroy">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <div v-if="modal" class="bg-black opacity-25 absolute right-0 left-0 top-0 bottom-0 z-10"
+                     @click="modal = !modal"></div>
             </div>
 
             <div class="flex flex-center pt-6">
@@ -54,16 +69,34 @@
                 })
                 .catch(error => {
                     this.loading = false;
+
+                    if (error.response.status === 404) {
+                        this.$router.push('/contacts');
+                    }
                 });
         },
 
         data() {
             return {
                 loading: true,
+                modal: false,
                 contact: null
+            }
+        },
+
+        methods: {
+            destroy: function () {
+                axios.delete('/api/contacts/' + this.$route.params.id)
+                    .then(response => {
+                        this.$router.push('/contacts');
+                    })
+                    .catch(error => {
+                        alert('Internal Error. Unable to delete contact.');
+                    });
             }
         }
     }
+
 </script>
 
 <style scoped>

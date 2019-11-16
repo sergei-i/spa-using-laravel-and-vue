@@ -17,7 +17,8 @@
             'name',
             'label',
             'placeholder',
-            'errors'
+            'errors',
+            'data'
         ],
 
         data() {
@@ -53,8 +54,15 @@
                     'error-field': this.hasError
                 }
             }
+        },
+
+        watch: {
+            data: function (val) {
+                this.value = val;
+            }
         }
     }
+
 </script>
 
 <style scoped>
