@@ -32,7 +32,7 @@
 
                     <p class="pt-12 text-gray-500 text-xs uppercase font-bold">General</p>
 
-                    <router-link to="/" class="flex items-center py-2 hover:text-blue-600 text-sm">
+                    <router-link to="/contacts" class="flex items-center py-2 hover:text-blue-600 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                              class="fill-current text-blue-600 w-5 h-5">
                             <path class="st0"
@@ -49,7 +49,7 @@
                         <div class="tracking-wide pl-3">Contacts</div>
                     </router-link>
 
-                    <router-link to="/" class="flex items-center py-2 hover:text-blue-600 text-sm">
+                    <router-link to="/birthdays" class="flex items-center py-2 hover:text-blue-600 text-sm">
                         <svg viewBox="0 0 24 24" class="fill-current text-blue-600 w-5 h-5">
                             <path fill-rule="evenodd"
                                   d="M12.1 6.8c1.2 0 2.1-1 2.1-2.1 0-.4-.1-.8-.3-1.1L12.1.5l-1.8 3.1c-.2.3-.3.6-.3 1 0
