@@ -65,7 +65,7 @@
 
                     <p class="pt-12 text-gray-500 text-xs uppercase font-bold">Settings</p>
 
-                    <router-link to="/" class="flex items-center py-2 hover:text-blue-600 text-sm">
+                    <router-link to="/logout" class="flex items-center py-2 hover:text-blue-600 text-sm">
                         <svg viewBox="0 0 24 24" class="fill-current text-blue-600 w-5 h-5">
                             <path
                                 d="M21 3h-3.8c-.7 0-1.3-.6-1.3-1.3S16.5.4 17.2.4h5.1c.7 0 1.3.6 1.3 1.3v20.5c0
@@ -83,10 +83,14 @@
             <div class="flex flex-col flex-1 h-screen overflow-y-hidden">
                 <div class="h-16 px-6 border-b border-grey-400 flex items-center justify-between">
                     <div class="">
-                        Contacts
+                        {{ title }}
                     </div>
 
-                    <UserCircle :name="user.name" />
+                    <div class="flex items-center">
+                        <SearchBar/>
+
+                        <UserCircle :name="user.name"/>
+                    </div>
 
                 </div>
 
@@ -102,20 +106,40 @@
 </template>
 
 <script>
-    import UserCircle from './UserCircle'
+    import UserCircle from './UserCircle';
+    import SearchBar from './SearchBar';
 
     export default {
         name: "App",
 
         components: {
-            UserCircle
+            UserCircle,
+            SearchBar
         },
 
         props: [
             'user'
         ],
 
+        data() {
+            return {
+                title: ''
+            }
+        },
+
+        watch: {
+            $route(to, from) {
+                this.title = to.meta.title;
+            },
+
+            title() {
+                document.title = this.title + ' | SPA'
+            }
+        },
+
         created() {
+            this.title = this.$route.meta.title;
+
             window.axios.interceptors.request.use(
                 (config) => {
                     if (config.method === 'get') {
